@@ -1,6 +1,5 @@
 @import "./variables";
 @import "./mixins";
-
 @import "./dialog";
 
 .v-cal {
@@ -103,7 +102,7 @@
     position: relative;
     flex-grow: 1;
     background-color: $v-cal-event-bg;
-    color: $v-cal-event-bg;//$v-cal-event-color;
+    color: $v-cal-event-bg; //$v-cal-event-color;
     border-radius: $v-cal-event-border-radius;
     padding: $v-cal-event-padding;
     text-align: left;
@@ -119,7 +118,7 @@
       height: 100%;
       top: 0;
       right: 0;
-      background: linear-gradient(to right, transparent 0%, currentColor 75%);
+      background: inherit;
     }
 
     &:not(:last-child) {
@@ -330,7 +329,7 @@
 
     .v-cal-event-item {
       z-index: 1;
-      box-shadow: 0 0 5px rgba(0,0,0,.25);
+      box-shadow: 0 0 5px rgba(0, 0, 0, .25);
       width: 100%;
       padding: $v-cal-event-week-padding;
       font-size: $v-cal-event-week-font-size;
@@ -367,7 +366,7 @@
     }
 
     .v-cal-day__hour-block.is-now,
-    &:first-child .v-cal-day__hour-block.is-now{
+    &:first-child .v-cal-day__hour-block.is-now {
       $i: 10;
       @while $i <= 60 {
 
