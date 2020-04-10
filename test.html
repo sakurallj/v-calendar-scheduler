@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+</body>
+<script src="./moment.min.js"></script>
+<script>
+  function generateOneColGrids(beginHour, endHour, gapMinute) {
+    let len = Math.ceil(60 / gapMinute), gird = [];
+    for (let i = beginHour; i <= endHour; i++) {
+      for (let j = 0; j < len; j++) {
+        if (!!gird[i]) {
+          gird[i][j] = {has: false};
+        } else {
+          gird[i] = [
+            {has: false}
+          ];
+        }
+      }
+    }
+    return gird;
+  }
+
+  function calculateEventPosition(events, beginHour, endHour, gapMinute) {
+    //初始化数组
+    let grids = [generateOneColGrids(beginHour, endHour, gapMinute)];
+    for (let i in events) {
+      let event = events[i], maxIndex = 60 / gapMinute - 1;
+      event.startIndex = Math.floor(event.startTime.minutes() / gapMinute);
+      event.startHour = event.startTime.hours();
+      event.gap = (event.endTime - event.startTime) / (60 * 1000 * gapMinute);
+      event.gridIndexs = [];
+      let startHour = event.startHour, startIndex = event.startIndex;
+      //计算grid下标
+      for (let gI = 0; gI < event.gap; gI++) {
+        if (startIndex > maxIndex) {
+          startIndex = 0;
+          startHour++;
+        }
+        event.gridIndexs.push({
+          hour: startHour,
+          index: startIndex
+        });
+        startIndex++;
+      }
+      //判断格子是否可以放下
+      let can = [];
+      for (let gI in  grids) {
+        can[gI] = true;//可以放下
+        for (let gEI in event.gridIndexs) {
+          let index = event.gridIndexs[gEI];
+          if (grids[gI][index.hour][index.index].has) {
+            can[gI] = false;//不可以放下
+          }
+        }
+      }
+      let canGenerateOneColGrids = true, gIndex;
+      for (let cI in can) {
+        if (can[cI]) {
+          gIndex = cI;
+          canGenerateOneColGrids = false;
+        }
+      }
+      if (canGenerateOneColGrids) {
+        grids.push(generateOneColGrids(beginHour, endHour, gapMinute))
+        gIndex = grids.length - 1
+      }
+      console.log("gIndex", gIndex);
+      //放置格子
+      for (let gI in event.gridIndexs) {
+        let index = event.gridIndexs[gI];
+        grids[gIndex][index.hour][index.index].has = true;
+        grids[gIndex][index.hour][index.index].event = event;
+      }
+    }
+    return [grids, events];
+  }
+
+  console.log(calculateEventPosition([
+    {
+      startTime: moment("2020-04-10 00:00"),
+      endTime: moment("2020-04-10 02:00"),
+    }, {
+      startTime: moment("2020-04-10 00:00"),
+      endTime: moment("2020-04-10 01:00"),
+    }, {
+      startTime: moment("2020-04-10 00:00"),
+      endTime: moment("2020-04-10 03:00"),
+    }, {
+      startTime: moment("2020-04-10 01:00"),
+      endTime: moment("2020-04-10 02:00"),
+    }, {
+      startTime: moment("2020-04-10 01:00"),
+      endTime: moment("2020-04-10 02:00"),
+    }, {
+      startTime: moment("2020-04-10 01:00"),
+      endTime: moment("2020-04-10 03:00"),
+    }, {
+      startTime: moment("2020-04-10 01:00"),
+      endTime: moment("2020-04-10 03:00"),
+    }, {
+      startTime: moment("2020-04-10 02:00"),
+      endTime: moment("2020-04-10 03:00"),
+    }, {
+      startTime: moment("2020-04-10 02:00"),
+      endTime: moment("2020-04-10 03:00"),
+    }, {
+      startTime: moment("2020-04-10 03:00"),
+      endTime: moment("2020-04-10 04:00"),
+    }, {
+      startTime: moment("2020-04-10 03:00"),
+      endTime: moment("2020-04-10 04:00"),
+    }, {
+      startTime: moment("2020-04-10 05:00"),
+      endTime: moment("2020-04-10 06:00"),
+    },
+  ], 0, 23, 10));
+
+</script>
+</html>

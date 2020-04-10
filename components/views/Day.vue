@@ -83,11 +83,14 @@
             if (!b.startTime) return 1;
             return moment(a.startTime, 'HH:mm').format('HH') - moment(b.startTime, 'HH:mm').format('HH');
           });
+        console.log("buildCalendar",this.events);
         const mappedEvents = dayEvents.map(event => {
           // event.overlaps = dayEvents.filter( e => moment(event.startTime, 'HH:mm').isBetween( moment(e.startTime, 'HH:mm'), moment(e.endTime, 'HH:mm') ) && e !== event ).length;
           event.overlaps = dayEvents.filter(e => (moment(event.startTime, 'HH:mm').isBetween(moment(e.startTime, 'HH:mm'), moment(e.endTime, 'HH:mm')) || moment(event.startTime).isSame(moment(e.startTime), "hour")) && e !== event).length;
           return event;
         });
+        //计算最大的列数
+
 
         this.day = {
           d: today,
