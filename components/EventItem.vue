@@ -82,7 +82,7 @@
                         const width = 100 / ( this.event.overlaps + 1 );
                         styles.push({
                             'width': width + '%',
-                            'left': width + '%'
+                            // 'left': width + '%'
                         });
                     }
 
