@@ -66,7 +66,6 @@
         return (hours * this.ancestorHeight) + bordersOffset;
       },
       eventStyles() {
-
         let styles = [];
         styles.push({
           'backgroundColor': this.event.color,
