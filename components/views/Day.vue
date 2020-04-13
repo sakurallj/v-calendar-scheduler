@@ -15,12 +15,14 @@
                @click="timeClicked({ date: day.d.toDate(), time: time.hour() })"
                :class="[ time.isSame(now, 'hour') ? 'is-now' : '', hourClass ]"
                v-for="time in day.availableTimes"></div>
-          <event-item
-            v-for="event, index in day.events"
-            :key="index"
-            :event="event"
-            :use12="use12">
-          </event-item>
+          <div class="event-items">
+            <event-item
+              v-for="event, index in day.events"
+              :key="index"
+              :event="event"
+              :use12="use12">
+            </event-item>
+          </div>
         </div>
       </div>
     </div>

@@ -390,8 +390,15 @@
 }
 
 
+.event-items .v-cal-event-item:nth-child(odd) {
+  background: #0277bd;
+  color: #fff;
+}
 
-
+.event-items:nth-child(even) {
+  background: #0277bd;
+  color: #fff;
+}
 
 
 

@@ -26,12 +26,14 @@
                @click="timeClicked({ date: day.d.toDate(), time: time.hour() })"
                :class="[ time.hour() === now.hour() ? 'is-now' : '', hourClass ]" v-for="time in day.availableTimes">
           </div>
-          <event-item
-            v-for="event, index in day.events"
-            :key="index"
-            :event="event"
-            :use12="use12" >
-          </event-item>
+          <div class="event-items">
+            <event-item
+              v-for="event, index in day.events"
+              :key="index"
+              :event="event"
+              :use12="use12">
+            </event-item>
+          </div>
         </div>
       </div>
     </div>
@@ -77,15 +79,15 @@
         this.days = [];
 
         do {
-          const day = moment(temp); 
+          const day = moment(temp);
 
-          const dayEvents = this.events.filter( e => e.date.isSame(day, 'day') )
-            .sort( (a, b) => {
-              if ( !a.startTime ) return -1;
-              if ( !b.startTime ) return 1;
+          const dayEvents = this.events.filter(e => e.date.isSame(day, 'day'))
+            .sort((a, b) => {
+              if (!a.startTime) return -1;
+              if (!b.startTime) return 1;
               return moment(a.startTime).format('HH') - moment(b.startTime).format('HH');
             });
-          console.log( dayEvents);
+          console.log(dayEvents);
 
           let newDay = {
             d: day,
