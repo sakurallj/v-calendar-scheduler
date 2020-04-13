@@ -15,7 +15,6 @@
     </div>
     <div class="v-cal-days">
       <div class="v-cal-times">
-        <div class="v-cal-hour all-day">{{ allDayLabel }}</div>
         <div class="v-cal-hour" :class="{ 'is-now': time.isSame(now, 'hour') }" v-for="time in times">{{ time |
           formatTime(use12) }}
         </div>
@@ -23,42 +22,16 @@
       <div class="v-cal-days__wrapper">
         <div class="v-cal-day v-cal-day--week" v-for="day in days"
              :class="{ 'is-today': day.isToday, 'is-disabled': day.isDisabled }">
-
-          <div class="v-cal-day__hour-block all-day"
-               @click="timeClicked({ date: day.d.toDate(), time: null })">
-            <span class="v-cal-day__hour-block-fill">00:00 <template v-if="use12">PM</template></span>
-            <div class="v-cal-day__hour-content">
-              <div class="v-cal-event-list" :class="{'tiny-events': day.events.filter(e => !e.startTime).length > 2}">
-
-                <event-item
-                  v-for="event, index in day.events.filter(e => !e.startTime)"
-                  :key="index"
-                  :event="event"
-                  :has-dynamic-size="false"
-                  :use12="use12">
-                </event-item>
-
-              </div>
-            </div>
-          </div>
-
           <div class="v-cal-day__hour-block"
                @click="timeClicked({ date: day.d.toDate(), time: time.hour() })"
                :class="[ time.hour() === now.hour() ? 'is-now' : '', hourClass ]" v-for="time in day.availableTimes">
-            <span class="v-cal-day__hour-block-fill">{{ time | formatTime(use12) }}</span>
-            <div class="v-cal-day__hour-content">
-              <div class="v-cal-event-list">
-                <event-item
-                  v-for="event, index in day.events"
-                  :key="index"
-                  :event="event"
-                  :use12="use12"
-                  v-if="event.startTime && time.hours() === event.startTime.hours()">
-                </event-item>
-              </div>
-            </div>
           </div>
-
+          <event-item
+            v-for="event, index in day.events"
+            :key="index"
+            :event="event"
+            :use12="use12" >
+          </event-item>
         </div>
       </div>
     </div>
@@ -71,6 +44,7 @@
   import EventItem from '../EventItem';
   import IsView from '../mixins/IsView';
   import ShowsTimes from '../mixins/ShowsTimes';
+  import {calculateEventPosition} from '../CalculateEventPosition';
 
   export default {
     name: "week",
@@ -103,26 +77,23 @@
         this.days = [];
 
         do {
-          const day = moment(temp);
+          const day = moment(temp); 
 
-          const dayEvents = this.events.filter(e => e.date.isSame(day, 'day'))
-            .sort((a, b) => {
-              if (!a.startTime) return -1;
-              if (!b.startTime) return 1;
+          const dayEvents = this.events.filter( e => e.date.isSame(day, 'day') )
+            .sort( (a, b) => {
+              if ( !a.startTime ) return -1;
+              if ( !b.startTime ) return 1;
               return moment(a.startTime).format('HH') - moment(b.startTime).format('HH');
             });
-          const mappedEvents = dayEvents.map(event => {
-            event.overlaps = dayEvents.filter(e => (moment(event.startTime).isBetween(moment(e.startTime), moment(e.endTime)) || moment(event.startTime).isSame(moment(e.startTime), "hour")) && e !== event).length;
-            console.log("   event.overlaps ", event.overlaps);
-            return event;
-          });
+          console.log( dayEvents);
+
           let newDay = {
             d: day,
             isPast: temp.isBefore(now, 'day'),
             isToday: temp.isSame(now, 'day'),
             isDisabled: this.isDayDisabled(temp),
             availableTimes: this.times.map(time => moment(time).dayOfYear(day.dayOfYear())),
-            events: mappedEvents
+            events: calculateEventPosition(dayEvents, 0, 23, 10)
           };
           this.days.push(newDay);
 

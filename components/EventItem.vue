@@ -1,9 +1,9 @@
 <template>
-  <div ref="event_block" class="v-cal-event-item"
+  <div class="v-cal-event-item"
        :title="event.startTime | formatEventTime(use12) + ' - ' + event.displayText"
        :class="eventClasses"
        @click.stop="eventClicked"
-       :style="eventStyles">
+       :style="event.style">
     <span class="v-cal-event-time">{{ event.startTime | formatEventTime(use12) }}</span>
     <span class="v-cal-event-name">{{ event.displayText }}</span>
   </div>
@@ -49,7 +49,7 @@
         EventBus.$emit('event-clicked', this.event);
       },
       getAndSetAncestorHeight() {
-        this.ancestorHeight = this.findAncestor(this.$refs.event_block, 'v-cal-day__hour-content').offsetHeight;
+        // this.ancestorHeight = this.findAncestor(this.$refs.event_block, 'v-cal-day__hour-content').offsetHeight;
       },
       findAncestor(el, cls) {
         while ((el = el.parentElement) && !el.classList.contains(cls)) ;

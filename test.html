@@ -25,11 +25,23 @@
     return gird;
   }
 
+  function randomString(len) {
+    len = len || 32;
+    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678oOLl9gqVvUuI1';
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (i = 0; i < len; i++) {
+      pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+  }
+
   function calculateEventPosition(events, beginHour, endHour, gapMinute) {
+    // events = JSON.parse(JSON.stringify(events));
     //初始化数组
-    let grids = [generateOneColGrids(beginHour, endHour, gapMinute)];
+    let grids = [generateOneColGrids(beginHour, endHour, gapMinute)], posGrids = [], maxIndex = 60 / gapMinute - 1;
     for (let i in events) {
-      let event = events[i], maxIndex = 60 / gapMinute - 1;
+      let event = events[i];
       event.startIndex = Math.floor(event.startTime.minutes() / gapMinute);
       event.startHour = event.startTime.hours();
       event.gap = (event.endTime - event.startTime) / (60 * 1000 * gapMinute);
@@ -71,13 +83,32 @@
       }
       console.log("gIndex", gIndex);
       //放置格子
+      let eventId = randomString(16);
       for (let gI in event.gridIndexs) {
         let index = event.gridIndexs[gI];
         grids[gIndex][index.hour][index.index].has = true;
-        grids[gIndex][index.hour][index.index].event = event;
+        grids[gIndex][index.hour][index.index]._id = eventId;
+        posGrids[eventId] = {
+          gIndex: parseInt(gIndex),
+          event: event,
+        }
       }
     }
-    return [grids, events];
+    //合并格 ，计算每列的 格子的位置 宽高
+    let gridWith = 100 / grids.length,//每格的宽度 百分比
+      gridHeight = 100 / (grids[0].length * (maxIndex + 1));//每格的高度 百分比
+
+    for (let pI in posGrids) {
+      let posGrid = posGrids[pI];
+      posGrid.left = gridWith * posGrid.gIndex;
+      posGrid.top = (posGrid.event.startHour * maxIndex + posGrid.event.startIndex) * gridHeight;
+      posGrid.height = posGrid.event.gap * gridHeight;
+      posGrid.width = gridWith;
+      posGrid.style = 'left:' + posGrid.left + ';top:' + posGrid.top
+        + ';height' + posGrid.height + ';width:' + posGrid.width;
+    }
+
+    return [grids, events, posGrids];
   }
 
   console.log(calculateEventPosition([
