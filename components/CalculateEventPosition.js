@@ -91,7 +91,7 @@ export function calculateEventPosition(events, beginHour, endHour, gapMinute) {
   //合并格 ，计算每列的 格子的位置 宽高
   let gridWith = 100 / grids.length,//每格的宽度 百分比
     gridHeight = 100 / (grids[0].length * (maxIndex + 1));//每格的高度 百分比
-
+console.log(gridWith,gridHeight,grids);
   let list = [];
   for (let pI in posGrids) {
     let posGrid = posGrids[pI];

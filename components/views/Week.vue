@@ -95,7 +95,7 @@
             isToday: temp.isSame(now, 'day'),
             isDisabled: this.isDayDisabled(temp),
             availableTimes: this.times.map(time => moment(time).dayOfYear(day.dayOfYear())),
-            events: calculateEventPosition(dayEvents, 0, 23, 10)
+            events: calculateEventPosition(dayEvents, 0, 23, 1)
           };
           this.days.push(newDay);
 

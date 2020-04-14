@@ -61,7 +61,7 @@
           isPast: today.isBefore(now, 'day'),
           isToday: today.isSame(now, 'day'),
           availableTimes: this.times,
-          events: calculateEventPosition(this.events, 0, 23, 10)
+          events: calculateEventPosition(this.events, 0, 23, 1)
         };
         console.log("buildCalendar", this.day);
       }
